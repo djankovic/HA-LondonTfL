@@ -215,8 +215,8 @@ class LondonTfLSensor(SensorEntity):
         if self._tfl_data.is_empty():
             return attributes
 
+        attributes["departures"] = as_hasl_departures(self._tfl_data)
         departures = self._tfl_data.get_departures()
-        attributes["departures"] = as_hasl_departures(departures)
 
         data = [
             {

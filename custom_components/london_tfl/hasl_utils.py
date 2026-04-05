@@ -1,5 +1,6 @@
 from enum import StrEnum
 from typing import TypedDict
+from .tfl_data import TfLData
 
 
 class TransportType(StrEnum):
@@ -23,6 +24,7 @@ class DepartureLine(TypedDict):
     designation: str
     transport_mode: TransportType
     group_of_lines: str
+    color: str
 
 
 class Departure(TypedDict):
@@ -38,13 +40,16 @@ class Departure(TypedDict):
     expected: str
 
 
-def as_hasl_departures(departures: list[dict]) -> list[Departure]:
+def as_hasl_departures(data: TfLData) -> list[Departure]:
     """
     converts the list of departures into a format
     that HASL Departure card (3.2.0+) can understand
 
     the format can be found [here](https://github.com/hasl-sensor/lovelace-hasl-departure-card/blob/master/src/models.ts)
     """
+
+    departures = data.get_departures()
+    line_colours = data.get_line_colours()
 
     return [
         {
@@ -63,6 +68,7 @@ def as_hasl_departures(departures: list[dict]) -> list[Departure]:
                     )
                 ),
                 "group_of_lines": "",
+                "color": f"rgb({line_colours['r']}, {line_colours['g']}, {line_colours['b']})",
             },
             "expected": dep["expected"],
         }
