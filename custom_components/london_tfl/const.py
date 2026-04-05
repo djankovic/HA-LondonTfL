@@ -105,3 +105,25 @@ TFL_COLOUR_CODES = {
     "tram": {"r": 95, "g": 181, "b": 38},
     "default": {"r": 0, "g": 25, "b": 168},
 }
+
+# TfL Line Diagram Standard (Issue 4 - January 2025)
+# https://content.tfl.gov.uk/tfl-line-diagram-standard.pdf
+LINE_COLOR_CODES = {
+    "bakerloo": {"r": 178, "g": 99, "b": 0},
+    "central": {"r": 220, "g": 36, "b": 31},
+    "circle": {"r": 255, "g": 200, "b": 10},
+    "district": {"r": 0, "g": 125, "b": 50},
+    "hammersmith-city": {"r": 245, "g": 137, "b": 166},
+    "jubilee": {"r": 131, "g": 141, "b": 147},
+    "metropolitan": {"r": 155, "g": 0, "b": 88},
+    "northern": {"r": 0, "g": 0, "b": 0},
+    "piccadilly": {"r": 0, "g": 25, "b": 168},
+    "victoria": {"r": 3, "g": 155, "b": 229},
+    "waterloo-city": {"r": 118, "g": 208, "b": 189},
+    "lioness": {"r": 250, "g": 166, "b": 26},
+    "mildmay": {"r": 0, "g": 119, "b": 173},
+    "windrush": {"r": 237, "g": 27, "b": 0},
+    "weaver": {"r": 130, "g": 58, "b": 98},
+    "suffragette": {"r": 91, "g": 189, "b": 114},
+    "liberty": {"r": 93, "g": 96, "b": 97},
+}

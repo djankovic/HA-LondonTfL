@@ -12,6 +12,7 @@ from custom_components.london_tfl.codes import atco_to_crs
 from custom_components.london_tfl.const import (
     TFL_TRANSPORT_TYPES,
     TFL_COLOUR_CODES,
+    LINE_COLOR_CODES,
     USE_LDBWS_URL,
 )
 from custom_components.london_tfl.network import LDBWS, LDBWSError, request
@@ -213,4 +214,7 @@ class TfLData:
 
     def get_line_colours(self):
         method = self._method_property(TFL_COLOUR_CODES)
-        return TFL_COLOUR_CODES[method]
+        method_color = TFL_COLOUR_CODES[method]
+        if self.method == "tube" or self.method == "overground":
+            return LINE_COLOR_CODES.get(self.line, method_color)
+        return method_color

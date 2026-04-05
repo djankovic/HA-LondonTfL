@@ -53,9 +53,9 @@ class TestTfLData(unittest.TestCase):
 
         self.assertEqual(
             {
-                "r": 0,
-                "g": 25,
-                "b": 168,
+                "r": 131,
+                "g": 141,
+                "b": 147,
             },
             colours,
         )
