@@ -35,8 +35,9 @@ This allow transformation between TIPLOC and CRS, closing the gap.
 """
 
 from pyrcs import LocationIdentifiers
+from typing import Optional, Any
 
-_locdata = None
+_locdata: Optional[Any] = None
 
 
 def atco_to_tiploc(atco: str) -> str:
@@ -63,6 +64,8 @@ def _tiploc_to_crs(tiploc: str) -> str:
     if _locdata is None:
         lid = LocationIdentifiers()
         _locdata = lid.fetch_loc_id()
+        if _locdata is None:
+            raise ValueError("Missing location data")
     locid = _locdata["Location ID"]
     res = locid.loc[locid["TIPLOC"] == tiploc, "CRS"]
     if len(res) > 1:

@@ -6,7 +6,7 @@ import logging
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Any
 from homeassistant import config_entries, core
 from homeassistant.components.sensor import SensorEntity, PLATFORM_SCHEMA
 from homeassistant.const import CONF_NAME
@@ -108,8 +108,8 @@ async def async_setup_platform(
     discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
     """Set up the sensor platform."""
-    name = config.get(CONF_NAME)
-    stops = config.get(CONF_STOPS)
+    name = config.get(CONF_NAME, "")
+    stops = config.get(CONF_STOPS, [])
 
     sensors = []
     for stop in stops:
@@ -218,7 +218,7 @@ class LondonTfLSensor(SensorEntity):
         attributes["departures"] = as_hasl_departures(self._tfl_data)
         departures = self._tfl_data.get_departures()
 
-        data = [
+        data: list[dict[str, Any]] = [
             {
                 "title_default": "To $title",
                 "line1_default": "at $time",

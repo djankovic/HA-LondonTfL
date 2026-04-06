@@ -77,14 +77,15 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not result:
                 _LOGGER.warning("There was no reply from TfL servers.")
                 errors["base"] = "request"
-            result = json.loads(result)
-            lines = {item["id"]: item["name"] for item in result}
+            else:
+                result = json.loads(result)
+                lines = {item["id"]: item["name"] for item in result}
         except OSError:
             _LOGGER.warning("Something broke.")
             errors["base"] = "request"
         except Exception:
             _LOGGER.warning(
-                "Failed to interpret received %s", "JSON. " + str(result), exc_info=1
+                "Failed to interpret received %s", "JSON. " + str(result), exc_info=True
             )
             errors["base"] = "request"
 
@@ -127,19 +128,20 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not result:
                 _LOGGER.warning("There was no reply from TfL servers.")
                 errors["base"] = "request"
-            result = json.loads(result)
-            stations = {}
-            if self.data["lastMethod"] != "bus":
-                stations = {
-                    item["stationNaptan"]: item["commonName"] for item in result
-                }
             else:
-                stations = {item["id"]: item["commonName"] for item in result}
+                result = json.loads(result)
+                stations = {}
+                if self.data["lastMethod"] != "bus":
+                    stations = {
+                        item["stationNaptan"]: item["commonName"] for item in result
+                    }
+                else:
+                    stations = {item["id"]: item["commonName"] for item in result}
         except OSError:
             _LOGGER.warning("Something broke.")
             errors["base"] = "request"
         except Exception:
-            _LOGGER.warning("Failed to interpret received %s", "JSON.", exc_info=1)
+            _LOGGER.warning("Failed to interpret received %s", "JSON.", exc_info=True)
             errors["base"] = "request"
 
         description_placeholders = {"extra_description": ""}
@@ -354,6 +356,9 @@ Please register at https://realtime.nationalrail.co.uk/OpenLDBWSRegistration/Reg
 
     async def async_step_edit_station(self, user_input: dict[str, Any] | None = None):
         """Edit the options for the selected stop (max, platform, shorten names, NR token)."""
+        if not isinstance(self._editing_index, int):
+            return await self.async_step_edit_stop()
+
         stop = self._stops[self._editing_index]
 
         if user_input is not None:
