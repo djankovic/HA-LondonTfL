@@ -1,6 +1,7 @@
 from enum import StrEnum
 from typing import TypedDict
 from .tfl_data import TfLData
+from .const import LINE_SHORT_NAMES
 
 
 class TransportType(StrEnum):
@@ -57,7 +58,7 @@ def as_hasl_departures(data: TfLData) -> list[Departure]:
             "deviations": None,
             "direction_code": 0,
             "line": {
-                "designation": dep["line"],
+                "designation": LINE_SHORT_NAMES.get(data.line, str(dep["line"])),
                 "transport_mode": (
                     TransportType.METRO
                     if dep["type"] == "Metros"

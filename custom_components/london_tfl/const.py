@@ -127,3 +127,29 @@ LINE_COLOR_CODES = {
     "suffragette": {"r": 91, "g": 189, "b": 114},
     "liberty": {"r": 93, "g": 96, "b": 97},
 }
+
+LINE_SHORT_NAMES = {
+    # Underground
+    "bakerloo": "BAK",
+    "central": "CEN",
+    "circle": "CIR",
+    "district": "DIS",
+    "hammersmith-city": "HMC",
+    "jubilee": "JUB",
+    "metropolitan": "MET",
+    "northern": "NOR",
+    "piccadilly": "PIC",
+    "victoria": "VIC",
+    "waterloo-city": "WAC",
+    # Overground
+    "lioness": "LIO",
+    "mildmay": "MIL",
+    "windrush": "WIN",
+    "weaver": "WEA",
+    "suffragette": "SUF",
+    "liberty": "LIB",
+    # Rails and shuttles
+    "dlr": "DLR",
+    "elizabeth-line": "ELZ",
+    "london-cable-car": "CBL",
+}
