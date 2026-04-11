@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import TypedDict
+from typing import TypedDict, Union
 from .tfl_data import TfLData
 from .const import LINE_SHORT_NAMES
 
@@ -21,11 +21,12 @@ class DepartureDeviation(TypedDict):
 
 
 class DepartureLine(TypedDict):
-    # id: int
+    id: Union[int, str]
     designation: str
     transport_mode: TransportType
     group_of_lines: str
     color: str
+    provider: str
 
 
 class Departure(TypedDict):
@@ -58,6 +59,7 @@ def as_hasl_departures(data: TfLData) -> list[Departure]:
             "deviations": None,
             "direction_code": 0,
             "line": {
+                "id": data.line,
                 "designation": LINE_SHORT_NAMES.get(data.line, str(dep["line"])),
                 "transport_mode": (
                     TransportType.METRO
@@ -70,6 +72,7 @@ def as_hasl_departures(data: TfLData) -> list[Departure]:
                 ),
                 "group_of_lines": "",
                 "color": f"rgb({line_colours['r']}, {line_colours['g']}, {line_colours['b']})",
+                "provider": "ha-londontfl",
             },
             "expected": dep["expected"],
         }
