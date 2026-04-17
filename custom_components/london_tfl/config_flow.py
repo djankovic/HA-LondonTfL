@@ -19,7 +19,6 @@ from .const import (
     CONF_PLATFORM,
     DEFAULT_MAX,
     DEFAULT_METHODS,
-    DEFAULT_LINES,
     DOMAIN,
     TFL_LINES_URL,
     TFL_STATIONS_URL,
@@ -70,13 +69,12 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.data["lastLine"] = user_input[CONF_LINE]
             return await self.async_step_station()
 
-        lines = DEFAULT_LINES
+        lines = {}
         try:
             url_base = TFL_LINES_URL.format(self.data["lastMethod"])
             result = await request(url_base)
             if not result:
                 _LOGGER.warning("There was no reply from TfL servers.")
-                errors["base"] = "request"
             else:
                 result = json.loads(result)
                 lines = {item["id"]: item["name"] for item in result}
@@ -84,10 +82,10 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.warning("Something broke.")
             errors["base"] = "request"
         except Exception:
-            _LOGGER.warning(
-                "Failed to interpret received %s", "JSON. " + str(result), exc_info=True
-            )
-            errors["base"] = "request"
+            _LOGGER.warning("Failed to fetch lines", exc_info=True)
+
+        if not lines:
+            return self.async_abort(reason="cannot_connect")
 
         return self.async_show_form(
             step_id="lines",
@@ -127,7 +125,6 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             result = await request(stations_url)
             if not result:
                 _LOGGER.warning("There was no reply from TfL servers.")
-                errors["base"] = "request"
             else:
                 result = json.loads(result)
                 stations = {}
@@ -141,8 +138,10 @@ class LondonTfLConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             _LOGGER.warning("Something broke.")
             errors["base"] = "request"
         except Exception:
-            _LOGGER.warning("Failed to interpret received %s", "JSON.", exc_info=True)
-            errors["base"] = "request"
+            _LOGGER.warning("Failed to fetch stations", exc_info=True)
+
+        if not stations:
+            return self.async_abort(reason="cannot_connect")
 
         description_placeholders = {"extra_description": ""}
         extra_fields = {}
@@ -238,7 +237,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self._last_line = user_input[CONF_LINE]
             return await self.async_step_add_station()
 
-        lines = DEFAULT_LINES
+        lines = {}
         try:
             result = await request(TFL_LINES_URL.format(self._last_method))
             if not result:
@@ -246,14 +245,15 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     "No reply from TfL when fetching lines for method %s",
                     self._last_method,
                 )
-                errors["base"] = "request"
             else:
                 lines = {item["id"]: item["name"] for item in json.loads(result)}
         except Exception:
             _LOGGER.warning(
                 "Failed to fetch lines for method %s", self._last_method, exc_info=True
             )
-            errors["base"] = "request"
+
+        if not lines:
+            return self.async_abort(reason="cannot_connect")
 
         return self.async_show_form(
             step_id="add_line",
@@ -290,7 +290,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                     "No reply from TfL when fetching stations for line %s",
                     self._last_line,
                 )
-                errors["base"] = "request"
             else:
                 data = json.loads(result)
                 if self._last_method != "bus":
@@ -305,7 +304,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             _LOGGER.warning(
                 "Failed to fetch stations for line %s", self._last_line, exc_info=True
             )
-            errors["base"] = "request"
+
+        if not self._current_stations:
+            return self.async_abort(reason="cannot_connect")
 
         extra_fields: dict = {}
         description_placeholders = {"extra_description": ""}

@@ -202,7 +202,7 @@ class TfLData:
             departures.append(departure)
 
             if len(self._station_name) == 0:
-                self._station_name = item["stationName"]
+                self._station_name = item.get("stationName", "")
 
         return departures
 
